@@ -20,11 +20,10 @@
     "/package.json",
     "/karma.conf.js"
   ],
-  "dependencies": {
-    "angular": "~1.2.26",
-    "showdown": "~0.3.1"
+  "dependencies" : {
+    "angular": "~1.2.26"
   },
-  "devDependencies": {
+  "devDependencies" : {
     "bootstrap": "~3.2.0",
     "angular-route": "~1.2.26",
     "jquery": "1.*",
@@ -32,19 +31,11 @@
     "html5shiv": "~3.7.2"
   },
   "overrides": {
-    "respond": {
+    "respond" : {
       "main": "dest/respond.min.js"
     },
     "angular-mocks": {
       "ignore": true
-    },
-    "showdown": {
-      "main": [
-        "compressed/showdown.js",
-        "compressed/extensions/github.js",
-        "compressed/extensions/google-prettify.js",
-        "compressed/extensions/twitter.js"
-      ]
     }
   }
 }
