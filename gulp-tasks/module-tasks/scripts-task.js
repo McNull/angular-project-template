@@ -21,7 +21,7 @@ module.exports = function (gulp, module) {
     var inputFiles = [
       path.join(module.folders.src, module.name + '.js'),
       path.join(module.folders.src, '**/*.js'),
-//      path.join(module.folders.dest, module.name + '-templates.js'),
+//      path.join(module.folders.src, module.name + '-templates.js'),
       '!**/*.test.js',
       '!**/*.ignore.js'
     ];
@@ -55,14 +55,10 @@ module.exports = function (gulp, module) {
     var inputFiles = [
       path.join(module.folders.src, module.name + '.js'),
       path.join(module.folders.src, '**/*.js'),
-      path.join(module.folders.dest, module.name + '-templates.js'),
+      path.join(module.folders.src, module.name + '-templates.js'),
       '!**/*.test.js',
       '!**/*.ignore.js'
     ];
-
-    // Build the self invoking function header & footer
-
-    var globals = module.globals || ['angular'];
 
     // At the moment of writing, generating and consuming source maps isn't optimal. Compile tools merge previous
     // maps incorrectly, browsers aren't 100% certain about breakpoint locations and are unable to unmangle
@@ -76,11 +72,11 @@ module.exports = function (gulp, module) {
       .pipe(wrap({
         header: {
           path: module.name + '-header.js',
-          contents: config.header + '(function(' + globals.join(',') + ') {\n'
+          contents: config.header + '(function(angular) {\n'
         },
         footer: {
           path: module.name + '-footer.js',
-          contents: '})(' + globals.join(',') + ');'
+          contents: '})(angular);'
         }
       }))
       .pipe(sourcemaps.init())
