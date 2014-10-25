@@ -29,15 +29,14 @@ module.exports = function(gulp, module) {
 
   module.task('templates-clean', function(cb) {
 
-    cb();
-//    var outputFiles = [
-//      path.join(module.folders.dest, module.name + '-templates.js')
-//    ];
-//
-//    var clean = require('gulp-rimraf');
-//
-//    return gulp.src(outputFiles, { read: false })
-//      .pipe(clean({ force: true }));
+    var outputFiles = [
+      path.join(module.folders.src, module.name + '-templates.js')
+    ];
+
+    var clean = require('gulp-rimraf');
+
+    return gulp.src(outputFiles, { read: false })
+      .pipe(clean({ force: true }));
 
   });
 

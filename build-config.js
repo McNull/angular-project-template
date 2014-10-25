@@ -22,10 +22,14 @@ var config = {
   modules: [
     {
       name: 'angular-logo',
+      /* use alias if your module name differs from the folder */
       alias: 'ngLogo'
     },
     {
-      name: 'app'
+      name: 'app',
+      /* optional: provide a list of globals which the module uses.
+      * this optimizes minification */
+      globals: ['angular']
     }
   ],
 
