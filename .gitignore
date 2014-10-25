@@ -2,7 +2,7 @@
 node_modules/*
 bower_components/*
 dest/*
-
+exclude/*
 .idea/**/*
 #!.idea/runConfigurations
 #!.idea/runConfigurations/**/*

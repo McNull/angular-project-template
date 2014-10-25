@@ -10,6 +10,7 @@
   "license": "MIT",
   "ignore": [
     "**/.*",
+    "exclude",
     "node_modules",
     "bower_components",
     "gulp-tasks",

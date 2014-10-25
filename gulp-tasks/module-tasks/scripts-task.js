@@ -21,14 +21,14 @@ module.exports = function (gulp, module) {
     var inputFiles = [
       path.join(module.folders.src, module.name + '.js'),
       path.join(module.folders.src, '**/*.js'),
-//      path.join(module.folders.src, module.name + '-templates.js'),
+      '!' + path.join(module.folders.src, module.name + '-templates.js'),
       '!**/*.test.js',
       '!**/*.ignore.js'
     ];
 
     return {
       glob: inputFiles,
-      tasks: ['scripts-no-templates-rebuild']
+      tasks: ['scripts']
     };
 //    gulp.watch(inputFiles, [ module.name + '-scripts' ]);
   });
