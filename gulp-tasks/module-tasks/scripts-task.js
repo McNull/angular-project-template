@@ -3,6 +3,7 @@ var concat = require('gulp-concat');
 var ngAnnotate = require('gulp-ng-annotate');
 var uglify = require('gulp-uglify');
 var path = require('path');
+var File = require('vinyl');
 
 var wrap = require('../lib/gulp-wrap-src.js');
 var config = require('../../build-config.js');
@@ -11,29 +12,42 @@ var filter = require('../lib/gulp-mini-filter.js');
 
 module.exports = function (gulp, module) {
 
-  module.watch('scripts', function() {
+  module.watch('scripts', function () {
+
+    var inputFiles = [
+      module.name + '.js',
+      '*.js',
+      '!(generated)/**/*.js' // <- All subdirs except 'generated'
+    ];
+
+    inputFiles.forEach(function(x, i) {
+      inputFiles[i] = path.join(module.folders.src, x);
+    });
+
+    inputFiles.push('!**/*.test.js');
+    inputFiles.push('!**/*.ignore.js');
 
     // Input files differ from the actual script task:
     // We're not watching the templates.js output file, since this gives problems
     // when a manual build occurs.
     // The template (ng.html) watch task fires the script task.
 
-    var inputFiles = [
-      path.join(module.folders.src, module.name + '.js'),
-      path.join(module.folders.src, '**/*.js'),
-      '!' + path.join(module.folders.src, module.name + '-templates.js'),
-      '!**/*.test.js',
-      '!**/*.ignore.js'
-    ];
+    //var inputFiles = [
+    //  path.join(module.folders.src, module.name + '.js'),
+    //  path.join(module.folders.src, '!(generated)/**/*.js'),
+    //  //'!' + path.join(module.folders.src, 'generated/*.js'),
+    //  '!**/*.test.js',
+    //  '!**/*.ignore.js'
+    //];
 
     return {
       glob: inputFiles,
       tasks: ['scripts']
     };
-//    gulp.watch(inputFiles, [ module.name + '-scripts' ]);
+
   });
 
-  module.task('scripts-clean', function() {
+  module.task('scripts-clean', function () {
     var outputFiles = [
       path.join(module.folders.dest, module.name + '.js'),
       path.join(module.folders.dest, module.name + '.js.map'),
@@ -43,9 +57,32 @@ module.exports = function (gulp, module) {
 
     var clean = require('gulp-rimraf');
 
-    return gulp.src(outputFiles, { read: false })
-      .pipe(clean({ force: true }));
+    return gulp.src(outputFiles, {read: false})
+      .pipe(clean({force: true}));
 
+  });
+
+  module.task('scripts-header-footer', function () {
+
+    var globals = module.globals || ['angular'];
+
+    var header = new File({
+      path: 'generated/header.js',
+      contents: new Buffer(config.header + '(function(' + globals.join(',') + ') {\n')
+    });
+
+    var footer = new File({
+      path: 'generated/footer.js',
+      contents: new Buffer('})(' + globals.join(',') + ');')
+    });
+
+    var ret = gulp.dest(module.folders.src);
+
+    ret.write(header);
+    ret.write(footer);
+    ret.end();
+
+    return ret;
   });
 
   function scriptsTask() {
@@ -53,12 +90,34 @@ module.exports = function (gulp, module) {
     // The input files differ from the watch task: we're including the templates.js file here.
 
     var inputFiles = [
-      path.join(module.folders.src, module.name + '.js'),
-      path.join(module.folders.src, '**/*.js'),
-      path.join(module.folders.src, module.name + '-templates.js'),
-      '!**/*.test.js',
-      '!**/*.ignore.js'
+      'generated/header.js',
+      module.name + '.js',
+      '*.js',
+      '!(generated)/**/*.js', // <- All subdirs except 'generated'
+      'generated/{templates,footer}.js'
     ];
+
+    inputFiles.forEach(function(x, i) {
+
+      inputFiles[i] = path.join(module.folders.src, x);
+
+    });
+
+    inputFiles.push('!**/*.test.js');
+    inputFiles.push('!**/*.ignore.js');
+
+
+    //var inputFiles = [
+    //  path.join(module.folders.src, 'generated/header.js'),
+    //  path.join(module.folders.src, module.name + '.js'),
+    //  //path.join(module.folders.src, '**/*.js'),
+    //  path.join(module.folders.src, '*.js'),
+    //  path.join(module.folders.src, '!(generated)**/*.js'),
+    //  path.join(module.folders.src, 'generated/templates.js'),
+    //  path.join(module.folders.src, 'generated/footer.js'),
+    //  '!**/*.test.js',
+    //  '!**/*.ignore.js'
+    //];
 
     // Build the self invoking function header & footer
 
@@ -74,38 +133,42 @@ module.exports = function (gulp, module) {
 
     return gulp.src(inputFiles)
       .pipe(module.touch())
-      .pipe(wrap({
-        header: {
-          path: module.name + '-header.js',
-          contents: config.header + '(function(' + globals.join(',') + ') {\n'
-        },
-        footer: {
-          path: module.name + '-footer.js',
-          contents: '})(' + globals.join(',') + ');'
-        }
-      }))
+      //.pipe(filter(function (file) {
+      //  console.log(file.path);
+      //  return true;
+      //}))
+      //.pipe(wrap({
+      //  header: {
+      //    path: module.name + '-header.js',
+      //    contents: config.header + '(function(' + globals.join(',') + ') {\n'
+      //  },
+      //  footer: {
+      //    path: module.name + '-footer.js',
+      //    contents: '})(' + globals.join(',') + ');'
+      //  }
+      //}))
       .pipe(sourcemaps.init())
       .pipe(concat(module.name + '.js'))
       .pipe(ngAnnotate())
-      .pipe(sourcemaps.write('.', { sourceRoot: '../src/' + module.name }))
+      .pipe(sourcemaps.write('.', {sourceRoot: '../src/' + module.name}))
       .pipe(gulp.dest(module.folders.dest))
 
       // Create the minified version
 
       .pipe(sourcemaps.init())
-      .pipe(filter(function(file) {
+      .pipe(filter(function (file) {
 
         // Filter out the previous map file.
         return path.extname(file.path) != '.map';
 
       }))
       .pipe(rename(module.name + '.min.js'))
-      .pipe(uglify({ preserveComments: 'some' }))
-      .pipe(sourcemaps.write('.', { includeContent: false, sourceRoot: './' }))
+      .pipe(uglify({preserveComments: 'some'}))
+      .pipe(sourcemaps.write('.', {includeContent: false, sourceRoot: './'}))
       .pipe(gulp.dest(module.folders.dest));
   }
 
-  module.task('scripts-no-templates-rebuild', ['scripts-clean'], scriptsTask, true);
-  module.task('scripts', ['scripts-clean', 'templates'], scriptsTask);
+  module.task('scripts-no-templates-rebuild', ['scripts-clean', 'scripts-header-footer'], scriptsTask, true);
+  module.task('scripts', ['scripts-clean', 'templates', 'scripts-header-footer'], scriptsTask);
 };
 

@@ -14,7 +14,8 @@ module.exports = function (gulp, module) {
     '!**/*.less',
     '!**/*.map',
     '!**/*.ng.html',
-    '!**/*.ignore.*'
+    '!**/*.ignore.*',
+    '!**/generated/**/*.js'
   ];
 
 //  var exclude = /(\.css|\.js|\.svg|\.map|\.less|\.map|\.ng\.html)$/i;

@@ -1,8 +1,0 @@
-// ATTENTION!
-// DO NOT MODIFY THIS FILE BECAUSE IT WAS GENERATED AUTOMATICALLY
-// SO ALL YOUR CHANGES WILL BE LOST THE NEXT TIME THE FILE IS GENERATED
-angular.module('app').run(['$templateCache', function($templateCache){
-  $templateCache.put('app/about/about-test.ng.html', '<!DOCTYPE html><html><head lang=\"en\"><meta charset=\"UTF-8\"><title></title></head><body><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam, saepe, veniam? Assumenda aut debitis, dolor est id ipsa ipsum iusto laborum minus mollitia natus nesciunt pariatur perspiciatis possimus reiciendis soluta.</p></body></html>');
-  $templateCache.put('app/about/another.ng.html', '');
-  $templateCache.put('app/core/navbar/navbar.ng.html', '<nav class=\"navbar navbar-default navbar-fixed-top\" role=\"navigation\"><div class=\"container\"><div class=\"navbar-header\"><button type=\"button\" class=\"navbar-toggle\" ng-click=\"collapsed = !collapsed\" ng-blur=\"collapse()\"><span class=\"icon-bar\"></span> <span class=\"icon-bar\"></span> <span class=\"icon-bar\"></span></button><a class=\"navbar-brand\" href=\"#/\">Project name</a></div><div class=\"navbar-collapse\" ng-class=\"{ collapse: collapsed }\"><ul class=\"nav navbar-nav navbar-right\"><li ng-repeat=\"route in routes\" ng-class=\"{ active: route == currentRoute }\"><a ng-href=\"#{{ route.url }}\" ng-click=\"collapse()\">{{ route.name }}</a></li></ul></div></div></nav>');
-}]);

@@ -55,7 +55,7 @@ module.exports = function (options) {
         buffer.join('\n') + '\n}]);';
 
       var file = new File({
-        path: options.filename || options.moduleName + '-templates.js',
+        path: options.filename || options.moduleName + '-templates.gen.js',
         contents: new Buffer(contents)
       });
 

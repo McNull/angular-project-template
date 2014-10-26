@@ -27,10 +27,10 @@ module.exports = function(gulp, module) {
     };
   });
 
-  module.task('templates-clean', function(cb) {
+  module.task('templates-clean', function() {
 
     var outputFiles = [
-      path.join(module.folders.src, module.name + '-templates.js')
+      path.join(module.folders.src, 'generated/templates.js')
     ];
 
     var clean = require('gulp-rimraf');
@@ -68,17 +68,17 @@ module.exports = function(gulp, module) {
       .pipe(ngXml({
         moduleName: module.alias || module.name,
         base: config.folders.src,
-        filename: module.name + '-templates.js'
+        filename: path.join(module.name, 'generated/templates.js')
       }))
-      .pipe(modify(function(contents) {
-        return [
-          '// ATTENTION!',
-          '// DO NOT MODIFY THIS FILE BECAUSE IT WAS GENERATED AUTOMATICALLY',
-          '// SO ALL YOUR CHANGES WILL BE LOST THE NEXT TIME THE FILE IS GENERATED',
-          ''
-        ].join('\n') + contents;
-      }))
-      .pipe(gulp.dest(module.folders.src));
+      //.pipe(modify(function(contents) {
+      //  return [
+      //    '// ATTENTION!',
+      //    '// DO NOT MODIFY THIS FILE BECAUSE IT WAS GENERATED AUTOMATICALLY',
+      //    '// SO ALL YOUR CHANGES WILL BE LOST THE NEXT TIME THE FILE IS GENERATED',
+      //    ''
+      //  ].join('\n') + contents;
+      //}))
+      .pipe(gulp.dest(config.folders.src));
 
   });
 
