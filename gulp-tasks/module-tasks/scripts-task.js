@@ -17,7 +17,7 @@ module.exports = function (gulp, module) {
     var inputFiles = [
       module.name + '.js',
       '*.js',
-      '!(generated)/**/*.js' // <- All subdirs except 'generated'
+      '!(.gulp)/**/*.js' // <- All subdirs except '.gulp'
     ];
 
     inputFiles.forEach(function(x, i) {
@@ -34,8 +34,8 @@ module.exports = function (gulp, module) {
 
     //var inputFiles = [
     //  path.join(module.folders.src, module.name + '.js'),
-    //  path.join(module.folders.src, '!(generated)/**/*.js'),
-    //  //'!' + path.join(module.folders.src, 'generated/*.js'),
+    //  path.join(module.folders.src, '!(.gulp)/**/*.js'),
+    //  //'!' + path.join(module.folders.src, '.gulp/*.js'),
     //  '!**/*.test.js',
     //  '!**/*.ignore.js'
     //];
@@ -67,12 +67,12 @@ module.exports = function (gulp, module) {
     var globals = module.globals || ['angular'];
 
     var header = new File({
-      path: 'generated/header.js',
+      path: '.gulp/header.js',
       contents: new Buffer(config.header + '(function(' + globals.join(',') + ') {\n')
     });
 
     var footer = new File({
-      path: 'generated/footer.js',
+      path: '.gulp/footer.js',
       contents: new Buffer('})(' + globals.join(',') + ');')
     });
 
@@ -90,11 +90,11 @@ module.exports = function (gulp, module) {
     // The input files differ from the watch task: we're including the templates.js file here.
 
     var inputFiles = [
-      'generated/header.js',
+      '.gulp/header.js',
       module.name + '.js',
-      '*.js',
-      '!(generated)/**/*.js', // <- All subdirs except 'generated'
-      'generated/{templates,footer}.js'
+      '**/*.js',
+      '.gulp/templates.js',
+      '.gulp/footer.js'
     ];
 
     inputFiles.forEach(function(x, i) {
@@ -104,17 +104,19 @@ module.exports = function (gulp, module) {
     });
 
     inputFiles.push('!**/*.test.js');
+    inputFiles.push('!**/*.ignore/*.js');
     inputFiles.push('!**/*.ignore.js');
 
 
+
     //var inputFiles = [
-    //  path.join(module.folders.src, 'generated/header.js'),
+    //  path.join(module.folders.src, '.gulp/header.js'),
     //  path.join(module.folders.src, module.name + '.js'),
     //  //path.join(module.folders.src, '**/*.js'),
     //  path.join(module.folders.src, '*.js'),
-    //  path.join(module.folders.src, '!(generated)**/*.js'),
-    //  path.join(module.folders.src, 'generated/templates.js'),
-    //  path.join(module.folders.src, 'generated/footer.js'),
+    //  path.join(module.folders.src, '!(.gulp)**/*.js'),
+    //  path.join(module.folders.src, '.gulp/templates.js'),
+    //  path.join(module.folders.src, '.gulp/footer.js'),
     //  '!**/*.test.js',
     //  '!**/*.ignore.js'
     //];
@@ -133,10 +135,10 @@ module.exports = function (gulp, module) {
 
     return gulp.src(inputFiles)
       .pipe(module.touch())
-      //.pipe(filter(function (file) {
-      //  console.log(file.path);
-      //  return true;
-      //}))
+      .pipe(filter(function (file) {
+        console.log(file.path);
+        return true;
+      }))
       //.pipe(wrap({
       //  header: {
       //    path: module.name + '-header.js',

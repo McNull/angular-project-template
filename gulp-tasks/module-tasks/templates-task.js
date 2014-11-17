@@ -30,7 +30,7 @@ module.exports = function(gulp, module) {
   module.task('templates-clean', function() {
 
     var outputFiles = [
-      path.join(module.folders.src, 'generated/templates.js')
+      path.join(module.folders.src, '.gulp/templates.js')
     ];
 
     var clean = require('gulp-rimraf');
@@ -68,7 +68,7 @@ module.exports = function(gulp, module) {
       .pipe(ngXml({
         moduleName: module.alias || module.name,
         base: config.folders.src,
-        filename: path.join(module.name, 'generated/templates.js')
+        filename: path.join(module.name, '.gulp/templates.js')
       }))
       //.pipe(modify(function(contents) {
       //  return [
